@@ -2,7 +2,7 @@
 
 1. Download repo
 ```
-git clone https://github.com/continental/guided-concept-projection-vectors.git
+git clone https://github.com/continental/local-concept-embeddings.git
 ```
 
 2. Create & activate venv (optionally)
