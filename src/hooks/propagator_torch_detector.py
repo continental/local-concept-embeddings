@@ -1,5 +1,5 @@
 '''
-Copyright (C) 2024 co-pace GmbH (a subsidiary of Continental AG).
+Copyright (C) 2025 co-pace GmbH (a subsidiary of Continental AG).
 Licensed under the BSD-3-Clause License. 
 @author: Georgii Mikriukov
 '''
@@ -7,14 +7,14 @@ Licensed under the BSD-3-Clause License.
 from typing import Any, Dict, List, Tuple, Union, Iterable
 import torch
 from torch import Tensor
-from hooks import BackwardHook, ForwardHook, ForwardInsertHook, Propagator
-from torchvision.models.detection.generalized_rcnn import GeneralizedRCNN
+from hooks import BackwardHook, ForwardHook, ForwardInsertHook, PropagatorTorchClassifier
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 from xai_utils.logging import log_assert
 from xai_utils.bbox import box_iou_yolo5
 
 
-class PropagatorTorchDetector(Propagator):
+class PropagatorTorchDetector(PropagatorTorchClassifier):
 
     def __init__(self,
                  model: torch.nn.Module,
@@ -95,7 +95,7 @@ class PropagatorTorchDetector(Propagator):
 
         temp = []
 
-        for batch in input:
+        for batch in tqdm(input, 'Predictions'):
 
             err_msg = f"'input' dataloader must return tensors, current type: {type(batch)}"
             log_assert(isinstance(batch, Tensor), err_msg)
@@ -265,7 +265,7 @@ class PropagatorTorchDetector(Propagator):
         predictions = {'pred_vec': [],
                        'pred_iou': []}
 
-        for i, tgts in zip(input, targets):
+        for i, tgts in tqdm(zip(input, targets), 'Gradients for target classes'):
 
             # always pass 1 img
             i.unsqueeze_(0).requires_grad_()
@@ -337,7 +337,7 @@ class PropagatorTorchDetector(Propagator):
 
         grads = []
 
-        for batch in input:
+        for batch in tqdm(input, 'Gradients'):
 
             err_msg = f"'input' dataloader must return tensors, current type: {type(batch)}"
             log_assert(isinstance(batch, Tensor), err_msg)
@@ -408,7 +408,7 @@ class PropagatorTorchDetector(Propagator):
 
         temp = []
 
-        for batch in input, 'Predictions from Activations':
+        for batch in tqdm(input, 'Predictions from Activations'):
 
             err_msg = f"'input' dataloader must return tensors, current type: {type(batch)}"
             log_assert(isinstance(batch, Tensor), err_msg)
@@ -442,7 +442,7 @@ class PropagatorTorchDetector(Propagator):
         acts = []
         grads = []
 
-        for i in input:
+        for i in tqdm(input, "Preds, Acts, Grads"):
             # always pass 1 img
             i.unsqueeze_(0).requires_grad_()
 

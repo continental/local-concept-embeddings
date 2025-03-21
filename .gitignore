@@ -6,11 +6,10 @@ __pycache__/
 
 # project folders
 
-data/
 .ipynb_checkpoints/
 
 # venv
-gcpv_venv/
+test_venv/
 
 # project files
 *.pkl
@@ -21,5 +20,10 @@ gcpv_venv/
 *.log
 *.html
 *.pdf
+*.xml
+*.txt
+*.jpg
+*.json
 
-!data/download_ms_coco_2017val_dataset.sh
+# images for README.md
+!images/*.png

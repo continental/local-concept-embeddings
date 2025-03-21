@@ -1,10 +1,10 @@
 '''
-Copyright (C) 2024 co-pace GmbH (a subsidiary of Continental AG).
+Copyright (C) 2025 co-pace GmbH (a subsidiary of Continental AG).
 Licensed under the BSD-3-Clause License. 
 @author: Georgii Mikriukov
 '''
 
-from typing import Dict, Any, Tuple, Iterable
+from typing import Tuple, Iterable
 import torch
 from PIL import Image, ImageDraw
 

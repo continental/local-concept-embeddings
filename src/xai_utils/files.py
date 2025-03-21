@@ -1,35 +1,38 @@
 '''
-Copyright (C) 2024 co-pace GmbH (a subsidiary of Continental AG).
+Copyright (C) 2025 co-pace GmbH (a subsidiary of Continental AG).
 Licensed under the BSD-3-Clause License. 
 @author: Georgii Mikriukov
 '''
 
 import urllib
 import os
+import io
 import pickle
 from typing import Iterable, Tuple, List, Dict, Union, Any
 from PIL import Image
 import torch
 import numpy as np
 import pathlib
-from skimage.transform import rescale, resize
+from skimage.transform import resize
 import cv2
 import random
 import json
-from .logging import log_assert, log_info, log_debug
+from .logging import log_assert, log_debug
 
 
 EPSILON = 1e-10
 
 
-def mkdir(path: str) -> None:
+def mkdir(path_str: str) -> None:
     """
     Creates directory if not exists
 
     Args:
         path: directory path
     """
-    pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+    path = pathlib.Path(path_str)
+
+    path.mkdir(parents=True, exist_ok=True)
 
 
 def rmdir(path: str) -> None:
@@ -453,7 +456,11 @@ def apply_mask(img: np.ndarray,
     return masked_img
 
 
-def add_countours_around_non_black_pixels(image: np.ndarray, mask_image: np.ndarray) -> np.ndarray:
+def add_countours_around_non_black_pixels(image: np.ndarray,
+                                          mask_image: np.ndarray,
+                                          thickness: int = 5,
+                                          countour_color: Tuple[int, int, int] = (0, 255, 0)
+                                          ) -> np.ndarray:
     """
    Draw countours around non-black image
 
@@ -461,18 +468,25 @@ def add_countours_around_non_black_pixels(image: np.ndarray, mask_image: np.ndar
         image: image to mask - np.ndarray[H, W, C]
         mask_image: mask - np.ndarray[H, W]
 
+    Kwargs:
+        thickness (int = 3): countour line thickness
+
     Returns:
         image with countours: np.ndarray[H, W, C]
     """
     gray = cv2.cvtColor(mask_image, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, 1, 255, cv2.THRESH_BINARY)
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(image, contours, -1, countour_color, thickness)
 
     return image
 
 
-def add_countours_around_mask(image: np.ndarray, binary_mask_image: np.ndarray) -> np.ndarray:
+def add_countours_around_mask(image: np.ndarray,
+                              binary_mask_image: np.ndarray,
+                              thickness: int = 5,
+                              countour_color: Tuple[int, int, int] = (0, 255, 0)
+                              ) -> np.ndarray:
     """
    Draw countours around non-black image
 
@@ -480,11 +494,17 @@ def add_countours_around_mask(image: np.ndarray, binary_mask_image: np.ndarray) 
         image: image to mask - np.ndarray[H, W, C]
         binary_mask_image: mask - np.ndarray[H, W]
 
+    Kwargs:
+        thickness (int = 3): countour line thickness
+
     Returns:
         image with countours: np.ndarray[H, W, C]
     """
-    contours, _ = cv2.findContours(binary_mask_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
+    if binary_mask_image.dtype == bool:
+        binary_mask_image = binary_mask_image.astype(np.uint8) * 255
+
+    contours, _ = cv2.findContours(binary_mask_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(image, contours, -1, countour_color, thickness)
 
     return image
 
@@ -767,3 +787,16 @@ def set_random_seeds(seed):
     torch.backends.cudnn.benchmark = False
     np.random.seed(seed)
     random.seed(seed)
+
+
+def reduce_img_quality(img: Image.Image, quality=50):
+
+    buffer = io.BytesIO()
+
+    img.save(buffer, format='JPEG', quality=quality)
+    
+    buffer.seek(0)
+
+    img_compressed = Image.open(buffer)
+
+    return img_compressed

@@ -1,5 +1,5 @@
 '''
-Copyright (C) 2024 co-pace GmbH (a subsidiary of Continental AG).
+Copyright (C) 2025 co-pace GmbH (a subsidiary of Continental AG).
 Licensed under the BSD-3-Clause License. 
 @author: Georgii Mikriukov
 '''
@@ -7,7 +7,7 @@ Licensed under the BSD-3-Clause License.
 from typing import Any, Dict, List, Tuple, Union, Iterable
 import torch
 from torch import Tensor
-from hooks import BackwardHook, ForwardHook, ForwardInsertHook, Propagator
+from hooks import BackwardHook, ForwardHook, ForwardInsertHook, PropagatorTorchClassifier
 from xai_utils.nn import get_module_layer_by_name
 from xai_utils.files import apply_smoothgrad_noise
 import numpy as np
@@ -79,8 +79,6 @@ def box_iou_yolo5(boxes1: Tensor, boxes2: Tensor):
 def non_max_suppression(prediction, conf_thres=0.7, iou_thres=0.45, agnostic=False, multi_label=False):
     """Runs Non-Maximum Suppression (NMS) on inference results
 
-    Modified code from https://github.com/ultralytics/yolov3
-
     Returns:
          list of detections, on (n,6) tensor per image [xyxy, conf, cls]
     """
@@ -145,8 +143,6 @@ def convert_results(results, model):
     """
     Formats predictions.
 
-    Modified code from https://github.com/ultralytics/yolov3
-
     Returns:
         stacked predictions (B, -1, 5 + num_classes)
     """
@@ -174,7 +170,7 @@ def convert_results(results, model):
             y[..., 0:2] = (y[..., 0:2] * 2 - 0.5 +
                            det.grid[i]) * det.stride[i]  # xy
             y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * det.anchor_grid[i]  # wh
-        else:  # for  on AWS Inferentia https://github.com/ultralytics/yolov5/pull/2953
+        else:
             xy = (y[..., 0:2] * 2 - 0.5 + det.grid[i]) * det.stride[i]  # xy
             wh = (y[..., 2:4] * 2) ** 2 * det.anchor_grid[i]  # wh
             y = torch.cat((xy, wh, y[..., 4:]), -1)
@@ -183,7 +179,7 @@ def convert_results(results, model):
     return torch.cat(z, 1)
 
 
-class PropagatorUltralyticsYOLOv3Old(Propagator):
+class PropagatorUltralyticsYOLOv3Old(PropagatorTorchClassifier):
 
     def __init__(self,
                  wrapped_model: Any,
@@ -1363,8 +1359,6 @@ def non_max_suppression_yolov5(
 ):
     """
     Non-Maximum Suppression (NMS) on inference results to reject overlapping detections
-
-    Modified code from https://github.com/ultralytics/yolov5
 
     Returns:
          list of detections, on (n,6) tensor per image [xyxy, conf, cls]
