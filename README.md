@@ -72,7 +72,7 @@ Concept-vs-context, i.e., concept-vs-background, information retrieval with **Lo
 
 1. Download repo
 ```
-git clone https://github.com/<repo_path>.git
+git clone https://github.com/local-concept-embeddings.git
 ```
 
 2. Create & activate venv (optionally)
