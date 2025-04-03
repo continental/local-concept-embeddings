@@ -4,13 +4,13 @@
 
 ```
 @article{mikriukov2023loce,
-  title={Local Concept Embeddings for Analysis of Concept Distributions in DNN Feature Spaces}, 
+  title={Local Concept Embeddings for Analysis of Concept Distributions in Vision DNN Feature Spaces},
   author={Georgii Mikriukov and Gesina Schwalbe and Korinna Bade},
-  year={2024},
+  year={2025},
   eprint={2311.14435},
   archivePrefix={arXiv},
   primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2311.14435},
+  url={https://arxiv.org/abs/2311.14435}, 
 }
 ```
 
