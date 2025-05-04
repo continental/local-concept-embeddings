@@ -17,19 +17,31 @@
 
 # LoCE: Local Concept Embeddings and Their Distributions
 
-**LoCEs** (Local Concept Embeddings) analyze how deep neural networks (DNNs) represent concepts in their latent feature spaces. Unlike traditional global concept methods that assign a single vector to each concept, **LoCEs** generate a separate embedding for each individual sample. Thus, **LoCEs** can capture:
+**Local Concept Embeddings (LoCE)** are a method for analyzing how computer vision DNNs represent object concepts within their latent feature spaces, particularly in complex, real-world scenes. Unlike global concept embedding methods that assign a single vector per category across a dataset, which averages over all samples and erases important context-specific details, **LoCEs generate a distinct embedding for each sample–concept pair**. This enables **fine-grained, context-sensitive analysis** of how models encode objects **relative to both background and surrounding categories**.
 
-- **Sub-concepts** – Variations within a concept, such as **near car** vs. **distant car**.
-- **Concept Overlap** – Cases where different concepts have similar representations, like **bus** and **truck**.
-- **Concept-vs-Context Encoding** – Representation of a concept in contrast to its specific background, like **cat on the sofa with dog in the background**.
+**LoCE is designed for use in environments with many interacting objects**, such as autonomous driving, where recognition accuracy is highly dependent on visual context. It supports analysis under conditions of occlusion, interaction, and scene ambiguity.
 
-For example, **LoCEs** can be used for:
+Each LoCE is computed by optimizing a **compact vector** (shape `C×1×1`) that reconstructs the binary segmentation mask of a target category from the model’s internal activations (shape `C×H×W`). The method uses only activations and external segmentation masks and does **not require any changes to the model**.
 
-- **Concept Understanding** – Analysis of how a model distinguishes between different objects and their contexts.
-- **Sub-Concept Discovery** – Identification of finer details within a concept.
-- **Concept Confusion Detection** – Identification of cases where a model struggles to differentiate between similar objects.
-- **Outlier Detection** – Detection of unusual or mislabeled data points.
-- **Information Retrieval** – Retrieval of images based on concept similarity in feature space.
+### Method Properties
+
+* **Compact**: Each LoCE is a low-dimensional representation (`C×1×1`), efficient for storage, comparison, and retrieval.
+* **Context-aware**: Embeddings capture concept encoding **in the presence of background and co-occurring objects**.
+* **Model-agnostic**: Applicable to any pretrained vision model (CNNs, ViTs, etc.) without architectural modifications.
+* **Task-agnostic**: Works with models trained for classification, detection, segmentation, or self-supervised tasks.
+* **Post-hoc**: No retraining or reconfiguration needed; operates directly on frozen models.
+* **Designed for complex scenes**: Tailored for real-world applications with dense object layouts and safety-critical contexts.
+
+### Applications
+
+* **Concept Separability and Purity**: Assess how distinctly the model encodes different object categories.
+* **Category Confusion Detection**: Identify overlaps between similar categories (e.g., "bicycle" vs "motorcycle").
+* **Sub-concept Discovery**: Uncover unlabeled subtypes or variations within a category (e.g., "flying plane" vs "landed plane").
+* **Outlier Detection**: Detect atypical or rare samples that deviate from a category's typical representation.
+* **Content-Based Information Retrieval**: Perform efficient, context-aware search using LoCE similarity.
+* **Model Comparison**: Evaluate and contrast internal representations across models, layers, or training regimes.
+
+For further details, see the [paper](https://arxiv.org/abs/2311.14435).
 
 
 ### Optimization and Generalization
