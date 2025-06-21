@@ -1,6 +1,6 @@
 # Local Concept Embeddings for Analysis of Concept Distributions in Vision DNN Feature Spaces
 
-> Mikriukov, Georgii, Gesina Schwalbe, and Korinna Bade. "Local Concept Embeddings for Analysis of Concept Distributions in DNN Feature Spaces." arXiv preprint arXiv:2311.14435 (2023).
+> Mikriukov, Georgii, Gesina Schwalbe, and Korinna Bade. "Local Concept Embeddings for Analysis of Concept Distributions in Vision DNN Feature Spaces." International Journal of Computer Vision (2025).
 
 ```
 @article{mikriukov2025loce,
