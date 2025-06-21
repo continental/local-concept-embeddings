@@ -27,7 +27,7 @@ Each LoCE is computed by optimizing a **compact vector** (shape `C×1×1`) that 
 ### Method Properties
 
 * **Compact**: Each LoCE is a low-dimensional representation (`C×1×1`), efficient for storage, comparison, and retrieval.
-* **Context-aware**: Embeddings capture concept encoding **in the presence of background and co-occurring objects**.
+* **Context-aware**: LoCEs capture each concept as it appears with its real background and other objects in the scene, not in isolation.
 * **Model-agnostic**: Applicable to any pretrained vision model (CNNs, ViTs, etc.) without architectural modifications.
 * **Task-agnostic**: Works with models trained for classification, detection, segmentation, or self-supervised tasks.
 * **Post-hoc**: No retraining or reconfiguration needed; operates directly on frozen models.
@@ -81,64 +81,106 @@ Concept-vs-context, i.e., concept-vs-background, information retrieval with **Lo
 # Demo 
 
 
-### Installation
+Download repo:
 
-1. Download repo
-```
-git clone https://github.com/local-concept-embeddings.git
-```
-
-2. Create & activate venv (optionally)
-
-We used Python 3.9.17
-
-```
-python -m venv test_venv
-source ./test_venv/bin/activate
+```bash
+git clone https://github.com/continental/local-concept-embeddings
 ```
 
-3. Install requirements
-```
-pip install -r requirements.txt
-```
-
-
-### Download MS COCO 2017 annotations + validation subset (240 MB + 780 MB):
-Execute: `./data/download_ms_coco_2017val_dataset.sh`
-
-Data and annotations folder: `./data/mscoco2017val/`
-
-
-
-### Try Jupyter Notebooks
-
-1. Optimize LoCEs: `./demo/1_optimize.ipynb`
-2. Experiments on LoCE distributions (Purity, Separation,  Overlap, and Confusion): `./demo/2_distibution_purity_separation_overlap_confusion.ipynb`
-3. Concept-based Retrieval and Outlier Retrieval: `./demo/3_retrieval_and_outliers.ipynb`
-2. Sub-concepts inspection: `./demo/4_subconcepts.ipynb`
-
-
-### If you want to use PASCAL VOC 2012 (1.9 GB):
-
-Execute: `./data/download_pascal_voc2012.sh`
-
-Run (convert VOC to COCO JSON): `python ./data/voc2coco.py`
-
-Data and annotations folder: `./data/voc2012/VOCdevkit/VOC2012/`
-
-
-# Folders
+Repo Structure:
 
 ```
-├── data                  <- Datasets / processed data / data cache.
+├── data                  <- Dataset downloaders / processed data / data cache.
 ├── demo                  <- Demonstration files.
 ├── experiment_outputs    <- (will be created by ./demo/*.ipynb).
 ├── src                   <- Source files of method.
 │   ├── data_structures   <- Data structures: Data loaders, data processors etc.
 │   ├── hooks             <- Extraction of activations and gradients.
 │   ├── loce              <- Method scripts.
-│   ├── xai_utils         <- Various utils.
+│   └── xai_utils         <- Various utils.
+├── Dockerfile            <- Container build instructions.
+├── LICENSE               <- License for this project
+├── NOTICE                <- Third-party attributions or legal notices
+├── README.md             <- This file.
+└── requirements.txt      <- Python (exact) dependencies.
 ```
+
+## Download data
+
+### MS COCO 2017 
+
+Download annotations + validation subset (240 MB + 780 MB), run:
+
+```bash
+./data/download_ms_coco_2017val_dataset.sh
+```
+
+Data and annotations folder: `./data/mscoco2017val/`
+
+### (Optionally) PASCAL VOC 2012 
+
+Download full dataset (1.9 GB), run:
+
+```bash
+./data/download_pascal_voc2012.sh
+```
+
+Convert VOC annotations to COCO-style JSON annotations: 
+
+```bash
+python ./data/voc2coco.py
+```
+
+Data and annotations folder: `./data/voc2012/VOCdevkit/VOC2012/`
+
+> Before running optimization, modify variables with correct paths in [demo/1_optimize.ipynb](demo/1_optimize.ipynb):
+
+```python
+imgs_path = "./data/voc2012/VOCdevkit/VOC2012/JPEGImages/"
+annots = "./data/voc2012/VOCdevkit/VOC2012/voc2012val_annotations.json"
+processed_annots = "./data/voc2012/VOCdevkit/VOC2012/processed/"
+```
+
+## Environment setup
+
+### Option 1: Docker + Jupyter
+
+1. Install [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). 
+
+2. Build [Dockerfile](Dockerfile) and run:
+
+```
+docker build -t loce-gpu .
+docker run -d --gpus all -p 8899:8899 -v $PWD:/app --name loce loce-gpu
+```
+
+3. Access Jupyter (no password) at: http://localhost:8899 (or your server IP:8899)
+
+
+### Option 2: Virtual Environment + Jupyter
+
+1. Create & activate venv (optionally), we used Python 3.9.17
+
+```bash
+python -m venv test_venv
+source ./test_venv/bin/activate
+```
+
+2. Install requirements
+
+```bash
+pip install -r requirements.txt
+```
+
+
+## Try Jupyter Notebooks
+
+Run [Jupyter Notebooks](demo/):
+
+1. Optimize LoCEs: `./demo/1_optimize.ipynb`
+2. Experiments on LoCE distributions (Purity, Separation,  Overlap, and Confusion): `./demo/2_distibution_purity_separation_overlap_confusion.ipynb`
+3. Concept-based Retrieval and Outlier Retrieval: `./demo/3_retrieval_and_outliers.ipynb`
+2. Sub-concepts inspection: `./demo/4_subconcepts.ipynb`
 
 
 # Documentation
