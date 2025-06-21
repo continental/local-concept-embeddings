@@ -3,14 +3,15 @@
 > Mikriukov, Georgii, Gesina Schwalbe, and Korinna Bade. "Local Concept Embeddings for Analysis of Concept Distributions in DNN Feature Spaces." arXiv preprint arXiv:2311.14435 (2023).
 
 ```
-@article{mikriukov2023loce,
-  title={Local Concept Embeddings for Analysis of Concept Distributions in Vision DNN Feature Spaces},
-  author={Georgii Mikriukov and Gesina Schwalbe and Korinna Bade},
-  year={2025},
-  eprint={2311.14435},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2311.14435}, 
+@article{mikriukov2025loce,
+  author    = {Georgii Mikriukov and Gesina Schwalbe and Korinna Bade},
+  title     = {Local Concept Embeddings for Analysis of Concept Distributions in Vision DNN Feature Spaces},
+  journal   = {International Journal of Computer Vision},
+  year      = {2025},
+  month     = {May},
+  doi       = {10.1007/s11263-025-02446-y},
+  url       = {https://doi.org/10.1007/s11263-025-02446-y},
+  issn      = {1573-1405}
 }
 ```
 
@@ -41,7 +42,7 @@ Each LoCE is computed by optimizing a **compact vector** (shape `C×1×1`) that 
 * **Content-Based Information Retrieval**: Perform efficient, context-aware search using LoCE similarity.
 * **Model Comparison**: Evaluate and contrast internal representations across models, layers, or training regimes.
 
-For further details, see the [paper](https://arxiv.org/abs/2311.14435).
+For further details, see the [paper](https://link.springer.com/article/10.1007/s11263-025-02446-y) or [preprint](https://arxiv.org/abs/2311.14435).
 
 
 ### Optimization and Generalization
